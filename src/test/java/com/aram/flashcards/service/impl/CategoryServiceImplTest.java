@@ -105,9 +105,17 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    void deletesById() {
+    void deletesExistentCategoryById() {
         categoryService.deleteById("1");
         verify(categoryRepository, times(1)).deleteById("1");
+    }
+
+    @Test
+    void throwsExceptionWhenDeletingNonExistentCategory() {
+        when(categoryRepository.existsById("1")).thenReturn(false);
+
+        assertThrows(NotFoundException.class, () -> categoryService.deleteById("1"));
+        verify(categoryRepository, times(1)).existsById("1");
     }
 
     @Test

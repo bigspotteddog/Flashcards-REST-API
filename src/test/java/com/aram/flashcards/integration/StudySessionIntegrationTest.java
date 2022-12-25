@@ -8,32 +8,33 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class CategoryIntegrationTest {
+public class StudySessionIntegrationTest {
 
-    @Value("${spring.servlet.path.categories}")
+    @Value("${spring.servlet.path.study-sessions}")
     private String path;
 
     @Autowired
-    private WebTestClient client;
+    WebTestClient client;
 
     @Test
-    void findsAllCategories() {
+    void findsAll() {
         String expectedResponseBody = """
                 [
                     {
                         "id":"1",
-                        "name":"Music"
+                        "categoryId":"1",
+                        "name":"Guitar chords"
                     },
                     {
                         "id":"2",
-                        "name":"Finance"
-                    }
+                        "categoryId":"2",
+                        "name":"Stock exchange"
+                    }   
                 ]
                 """;
 
@@ -45,124 +46,104 @@ public class CategoryIntegrationTest {
     }
 
     @Test
-    void findsExistentCategoryById() {
+    void findsById() {
         client.get().uri(path + "/1")
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().json("{'id':'1', 'name':'Music'}");
+                .expectBody().json("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"Guitar chords\"}");
     }
 
     @Test
-    void returnsNotFoundWhenFindingNonExistentCategoryById() {
+    void returnsNotFoundWhenFindingNonExistentStudySessionById() {
         client.get().uri(path + "/3")
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{'message':'Cannot find category with id = 3'}");
+                .expectBody().json("{\"message\":\"Cannot find study session with id = 3\"}");
     }
 
     @Test
-    void createsCategory() {
-        client.get().uri(path + "/details?name=Sports")
-                        .accept(APPLICATION_JSON)
-                        .exchange()
-                        .expectStatus().isNotFound()
-                        .expectBody().json("{\"message\":\"Cannot find category with name = Sports\"}");
-
+    void createsStudySession() {
         client.post().uri(path)
                 .contentType(APPLICATION_JSON)
-                .bodyValue("{\"name\":\"Sports\"}")
+                .bodyValue("{\"categoryId\":\"1\", \"name\":\"Classic music authors\"}")
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody()
                     .jsonPath("$.id").exists()
-                    .jsonPath("$.name").isEqualTo("Sports");
-
-        client.get().uri(path + "/details?name=Sports")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                    .jsonPath("$.id").exists()
-                    .jsonPath("$.name").isEqualTo("Sports");
+                    .jsonPath("$.categoryId").isEqualTo("1")
+                    .jsonPath("$.name").isEqualTo("Classic music authors");
     }
 
     @Test
-    void returnsConflictWhenCreatingCategoryWithDuplicateName() {
-        client.get().uri(path + "/details?name=Music")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().json("{\"id\":\"1\", \"name\":\"Music\"}");
-
+    void returnsNotFoundWhenCreatingStudySessionWithNonExistentCategory() {
         client.post().uri(path)
                 .contentType(APPLICATION_JSON)
-                .bodyValue("{\"name\":\"Music\"}")
-                .exchange()
-                .expectStatus().isEqualTo(CONFLICT.value())
-                .expectBody().json("{\"message\":\"Category with name = Music already exists\"}");
-    }
-
-    @Test
-    void returnsBadRequestWhenCreatingCategoryWithEmptyRequestBody() {
-        client.post().uri(path)
-                .contentType(APPLICATION_JSON)
-                .bodyValue("")
-                .exchange()
-                .expectStatus().isBadRequest();
-    }
-
-    @Test
-    void updatesExistentCategory() {
-        client.get().uri(path + "/1")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().json("{\"id\":\"1\", \"name\":\"Music\"}");
-
-        client.put().uri(path)
-                .contentType(APPLICATION_JSON)
-                .bodyValue("{\"id\":\"1\", \"name\":\"Jazz Music\"}")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().json("{\"id\":\"1\", \"name\":\"Jazz Music\"}");
-    }
-
-    @Test
-    void updatesNonExistentCategory() {
-        client.get().uri(path + "/3")
-                .accept(APPLICATION_JSON)
+                .bodyValue("{\"categoryId\":\"3\", \"name\":\"Classic music authors\"}")
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody().json("{\"message\":\"Cannot find category with id = 3\"}");
-
-        client.put().uri(path)
-                .contentType(APPLICATION_JSON)
-                .bodyValue("{\"id\":\"3\", \"name\":\"Sports\"}")
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody().json("{\"id\":\"3\", \"name\":\"Sports\"}");
     }
 
     @Test
-    void returnsConflictWhenUpdatingCategoryWithDuplicateName() {
-        client.get().uri(path + "/details?name=Finance")
+    void returnsBadRequestWhenCreatingStudySessionWithEmptyRequestBody() {
+        client.post().uri(path)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("")
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void updatesExistentStudySession() {
+        client.get().uri(path + "/1")
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().json("{\"id\":\"2\", \"name\":\"Finance\"}");
+                .expectBody().json("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"Guitar chords\"}");
 
         client.put().uri(path)
                 .contentType(APPLICATION_JSON)
-                .bodyValue("{\"id\":\"3\", \"name\":\"Finance\"}")
+                .bodyValue("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"Classic music\"}")
                 .exchange()
-                .expectStatus().isEqualTo(CONFLICT.value())
-                .expectBody().json("{\"message\":\"Category with name = Finance already exists\"}");
+                .expectStatus().isOk()
+                .expectBody().json("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"Classic music\"}");
     }
 
     @Test
-    void returnsBadRequestWhenUpdatingCategoryWithEmptyRequestBody() {
+    void updatesNonExistentStudySession() {
+        client.get().uri(path + "/3")
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isNotFound();
+
+        client.put().uri(path)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("{\"id\":\"3\", \"categoryId\":\"1\", \"name\":\"Classic music\"}")
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody().json("{\"id\":\"3\", \"categoryId\":\"1\", \"name\":\"Classic music\"}");
+
+        client.get().uri(path + "/3")
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().json("{\"id\":\"3\", \"categoryId\":\"1\", \"name\":\"Classic music\"}");
+    }
+
+    @Test
+    void returnsNotFoundWhenUpdatingStudySessionWithNonExistentCategory() {
+        client.put().uri(path)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("{\"id\":\"1\", \"categoryId\":\"3\", \"name\":\"Classic music\"}")
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody().json("{\"message\":\"Cannot find category with id = 3\"}");
+    }
+
+    @Test
+    void returnsBadRequestWhenUpdatingStudySessionWithEmptyRequestBody() {
         client.put().uri(path)
                 .contentType(APPLICATION_JSON)
                 .bodyValue("")
@@ -171,25 +152,27 @@ public class CategoryIntegrationTest {
     }
 
     @Test
-    void deletesExistentCategoryById() {
+    void deletesExistentStudySessionById() {
         client.get().uri(path + "/1")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().json("{\"id\":\"1\", \"name\":\"Music\"}");
+              .accept(APPLICATION_JSON)
+              .exchange()
+              .expectStatus().isOk()
+              .expectBody().json("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"Guitar chords\"}");
 
         client.delete().uri(path + "/1")
+                .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNoContent();
 
         client.get().uri(path + "/1")
+                .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find category with id = 1\"}");
+                .expectBody().json("{\"message\":\"Cannot find study session with id = 1\"}");
     }
 
     @Test
-    void returnsNotFoundWhenDeletingNonExistentCategory() {
+    void returnsNotFoundWhenDeletingNonExistentStudySession() {
         client.get().uri(path + "/3")
                 .accept(APPLICATION_JSON)
                 .exchange()
@@ -199,7 +182,7 @@ public class CategoryIntegrationTest {
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find category with id = 3\"}");
+                .expectBody().json("{\"message\":\"Cannot find study session with id = 3\"}");
     }
 
 }

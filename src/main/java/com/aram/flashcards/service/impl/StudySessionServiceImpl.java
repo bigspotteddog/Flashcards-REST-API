@@ -64,7 +64,7 @@ class StudySessionServiceImpl extends ValidatingService implements StudySessionS
 
     @Override
     public void deleteById(String id) {
-        validateId(id);
+        assertExistsById(id);
         studySessionRepository.deleteById(id);
     }
 
@@ -77,20 +77,12 @@ class StudySessionServiceImpl extends ValidatingService implements StudySessionS
 
     private void validate(StudySession studySession) {
         assertNonNull(studySession);
-        assertDoesNotExistByName(studySession.getName());
         categoryService.assertExistsById(studySession.getCategoryId());
     }
 
     private void validate(StudySessionRequest request) {
         assertNonNull(request);
-        assertDoesNotExistByName(request.getName());
         categoryService.assertExistsById(request.getCategoryId());
-    }
-
-    private void assertDoesNotExistByName(String name) {
-        if (studySessionRepository.existsByName(name)) {
-            throw new ConflictException(format("Study session with name = %s already exists", name));
-        }
     }
 
     private StudySession studySessionFrom(StudySessionRequest request) {

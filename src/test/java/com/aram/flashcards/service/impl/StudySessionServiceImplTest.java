@@ -70,15 +70,6 @@ public class StudySessionServiceImplTest {
     }
 
     @Test
-    void throwsExceptionWhenCreatingStudySessionWithDuplicateName() {
-        when(studySessionRepository.existsByName("Solar System")).thenReturn(true);
-        StudySessionRequest request = new StudySessionRequest("categoryId", "Solar System");
-
-        assertThrows(ConflictException.class, () -> studySessionService.createStudySession(request));
-        verify(studySessionRepository, times(1)).existsByName("Solar System");
-    }
-
-    @Test
     void throwsExceptionWhenCreatingStudySessionWithNonExistentCategory() {
         doThrow(new NotFoundException("Cannot find category with id = 2")).when(categoryService).assertExistsById("2");
         StudySessionRequest request = new StudySessionRequest("2", "Solar System");
@@ -111,15 +102,28 @@ public class StudySessionServiceImplTest {
     @Test
     void testExistsById() {
         when(studySessionRepository.existsById("1")).thenReturn(true);
+        when(studySessionRepository.existsById("2")).thenReturn(false);
 
         assertTrue(studySessionService.existsById("1"));
+        assertFalse(studySessionService.existsById("2"));
         verify(studySessionRepository, times(1)).existsById("1");
+        verify(studySessionRepository, times(1)).existsById("2");
     }
 
     @Test
-    void testDeleteById() {
+    void deletesExistentStudySession() {
+        when(studySessionRepository.existsById("1")).thenReturn(true);
+
         studySessionService.deleteById("1");
         verify(studySessionRepository, times(1)).deleteById("1");
+    }
+
+    @Test
+    void throwsExceptionWhenDeletingNonExistentStudySession() {
+        when(studySessionRepository.existsById("1")).thenReturn(false);
+
+        assertThrows(NotFoundException.class, () -> studySessionService.deleteById("1"));
+        verify(studySessionRepository, times(1)).existsById("1");
     }
 
     @Test

@@ -4,7 +4,8 @@ DROP TABLE IF EXISTS category;
 
 CREATE TABLE category(
     id VARCHAR(40) NOT NULL PRIMARY KEY,
-    name VARCHAR(30) NOT NULL
+    name VARCHAR(30) NOT NULL,
+    CONSTRAINT name_unique UNIQUE (name)
 );
 
 CREATE TABLE study_session(

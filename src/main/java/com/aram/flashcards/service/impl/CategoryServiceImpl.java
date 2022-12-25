@@ -48,7 +48,7 @@ class CategoryServiceImpl extends ValidatingService implements CategoryService {
 
     @Override
     public void deleteById(String id) {
-        validateId(id);
+        assertExistsById(id);
         categoryRepository.deleteById(id);
     }
 
