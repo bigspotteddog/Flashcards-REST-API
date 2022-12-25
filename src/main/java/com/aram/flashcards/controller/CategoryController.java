@@ -30,6 +30,11 @@ public class CategoryController implements ResponseHandler {
         return ok(categoryService.findById(id));
     }
 
+    @GetMapping("/details")
+    public ResponseEntity<Category> findByName(@RequestParam String name) {
+        return ok(categoryService.findByName(name));
+    }
+
     @PostMapping
     public ResponseEntity<Category> createCategory(@RequestBody CategoryRequest request) {
         return created(categoryService.createCategory(request));

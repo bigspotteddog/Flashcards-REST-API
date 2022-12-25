@@ -54,12 +54,12 @@ public class CategoryControllerTest extends WebLayerTest {
 
     @Test
     void findsCategoryById() throws Exception {
-        when(categoryService.findById("1")).thenReturn(category);
+        when(categoryService.findById("1")).thenReturn(new Category("1", "Music"));
 
         mockMvc.perform(get(categoriesPath + "/1")
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(serialize(category)));
+                .andExpect(content().json("{'id':'1', 'name':'Music'}"));
     }
 
     @Test
@@ -69,10 +69,31 @@ public class CategoryControllerTest extends WebLayerTest {
         when(categoryService.findById(id)).thenThrow(new NotFoundException(errorMessage));
 
         mockMvc.perform(get(categoriesPath + "/1")
-                .contentType(APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException))
-                .andExpect(content().json("{\"message\":\"Cannot find category with id = 1\"}"));
+                .andExpect(content().json("{'message':'Cannot find category with id = 1'}"));
+    }
+
+    @Test
+    void findsCategoryByName() throws Exception {
+        when(categoryService.findByName("Music")).thenReturn(new Category("1", "Music"));
+
+        mockMvc.perform(get(categoriesPath + "/details?name=Music")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{'id':'1','name':'Music'}"));
+    }
+
+    @Test
+    void returnsNotFoundWhenCategoryDoesNotExistByName() throws Exception {
+        when(categoryService.findByName("Music"))
+                .thenThrow(new NotFoundException("Cannot find category with name = Music"));
+
+        mockMvc.perform(get(categoriesPath + "/details?name=Music")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(content().json("{'message':'Cannot find category with name = Music'}"));
     }
 
     @Test
@@ -115,7 +136,7 @@ public class CategoryControllerTest extends WebLayerTest {
                 .content("{\"name\":\"Music\"}"))
                 .andExpect(status().isConflict())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ConflictException))
-                .andExpect(content().json("{\"message\":\"Category with name = Music already exists\"}"));
+                .andExpect(content().json("{'message':'Category with name = Music already exists'}"));
     }
 
     @Test

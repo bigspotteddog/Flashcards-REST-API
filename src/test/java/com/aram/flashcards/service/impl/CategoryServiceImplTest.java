@@ -45,14 +45,14 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    void testFindAll() {
+    void findsAll() {
         when(categoryRepository.findAll()).thenReturn(categories);
         assertEquals(categories, categoryService.findAll());
         verify(categoryRepository, times(1)).findAll();
     }
 
     @Test
-    void testFindById() {
+    void findsCategoryById() {
         when(categoryRepository.findById("1")).thenReturn(Optional.of(category));
         assertEquals(category, categoryService.findById("1"));
         verify(categoryRepository, times(1)).findById("1");
@@ -61,8 +61,25 @@ public class CategoryServiceImplTest {
     @Test
     void findByIdThrowsExceptionWhenCategoryDoesNotExist() {
         when(categoryRepository.findById("1")).thenReturn(Optional.empty());
+
         assertThrows(NotFoundException.class, () -> categoryService.findById("1"));
         verify(categoryRepository, times(1)).findById("1");
+    }
+
+    @Test
+    void findsCategoryByName() {
+        when(categoryRepository.findByName("Music")).thenReturn(Optional.of(new Category("1", "Music")));
+
+        assertEquals(new Category("1", "Music"), categoryService.findByName("Music"));
+        verify(categoryRepository, times(1)).findByName("Music");
+    }
+
+    @Test
+    void findByNameThrowsExceptionWhenCategoryDoesNotExist() {
+        when(categoryRepository.findByName("Music")).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> categoryService.findByName("Music"));
+        verify(categoryRepository, times(1)).findByName("Music");
     }
 
     @Test
@@ -76,7 +93,7 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    void testCreateCategory() {
+    void createsCategory() {
         when(categoryRepository.existsByName(request.getName())).thenReturn(false);
         when(categoryMapper.categoryFrom(request)).thenReturn(category);
         when(categoryRepository.save(category)).thenReturn(category);
@@ -88,20 +105,20 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    void testDeleteById() {
+    void deletesById() {
         categoryService.deleteById("1");
         verify(categoryRepository, times(1)).deleteById("1");
     }
 
     @Test
-    void testSave() {
+    void savesCategory() {
         when(categoryRepository.save(category)).thenReturn(category);
         assertEquals(category, categoryService.save(category));
         verify(categoryRepository, times(1)).save(category);
     }
 
     @Test
-    void testExistsById() {
+    void verifiesExistenceById() {
         when(categoryRepository.existsById("1")).thenReturn(true);
 
         assertTrue(categoryService.existsById("1"));

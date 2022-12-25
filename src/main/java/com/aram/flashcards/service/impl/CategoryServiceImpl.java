@@ -72,6 +72,12 @@ class CategoryServiceImpl extends ValidatingService implements CategoryService {
         }
     }
 
+    @Override
+    public Category findByName(String name) {
+        return categoryRepository.findByName(name)
+                .orElseThrow(() -> new NotFoundException(format("Cannot find category with name = %s", name)));
+    }
+
     private void validate(CategoryRequest request) {
         assertNonNull(request);
         assertDoesNotExistByName(request.getName());

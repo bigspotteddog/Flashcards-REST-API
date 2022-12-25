@@ -19,4 +19,6 @@ public interface CategoryService {
 
     void assertExistsById(String id);
 
+    Category findByName(String name);
+
 }
