@@ -3,6 +3,7 @@ package com.aram.flashcards.controller;
 import com.aram.flashcards.model.Category;
 import com.aram.flashcards.service.CategoryService;
 import com.aram.flashcards.service.dto.CategoryRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,12 +37,12 @@ public class CategoryController implements ResponseHandler {
     }
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody CategoryRequest request) {
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody CategoryRequest request) {
         return created(categoryService.createCategory(request));
     }
 
     @PutMapping
-    public ResponseEntity<Category> update(@RequestBody Category category) {
+    public ResponseEntity<Category> update(@Valid @RequestBody Category category) {
         return existsById(category.getId()) ? ok(save(category)) : created(save(category));
     }
 

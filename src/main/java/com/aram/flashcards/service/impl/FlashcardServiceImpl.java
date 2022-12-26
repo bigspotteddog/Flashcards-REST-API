@@ -37,7 +37,6 @@ class FlashcardServiceImpl extends ValidatingService implements FlashcardService
 
     @Override
     public Flashcard findById(String id) {
-        validateId(id);
         return flashcardRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(format("Cannot find flashcard with id = %s", id)));
     }
@@ -51,7 +50,6 @@ class FlashcardServiceImpl extends ValidatingService implements FlashcardService
 
     @Override
     public boolean existsById(String id) {
-        validateId(id);
         return flashcardRepository.existsById(id);
     }
 
@@ -63,17 +61,16 @@ class FlashcardServiceImpl extends ValidatingService implements FlashcardService
 
     @Override
     public void deleteById(String id) {
-        validateId(id);
         flashcardRepository.deleteById(id);
     }
 
     private void validate(FlashcardRequest request) {
-        assertNonNull(request);
+        assertNotNull(request);
         studySessionService.assertExistsById(request.getStudySessionId());
     }
 
     private void validate(Flashcard flashcard) {
-        assertNonNull(flashcard);
+        assertNotNull(flashcard);
         studySessionService.assertExistsById(flashcard.getStudySessionId());
     }
 

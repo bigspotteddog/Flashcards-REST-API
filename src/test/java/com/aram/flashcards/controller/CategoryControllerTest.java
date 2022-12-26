@@ -54,7 +54,7 @@ public class CategoryControllerTest extends WebLayerTest {
 
     @Test
     void findsCategoryById() throws Exception {
-        when(categoryService.findById("1")).thenReturn(new Category("1", "Music"));
+        when(categoryService.findById("1")).thenReturn((new Category("1", "Music")));
 
         mockMvc.perform(get(categoriesPath + "/1")
                 .contentType(APPLICATION_JSON))

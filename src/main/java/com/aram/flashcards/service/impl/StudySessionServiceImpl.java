@@ -5,7 +5,6 @@ import com.aram.flashcards.repository.StudySessionRepository;
 import com.aram.flashcards.service.CategoryService;
 import com.aram.flashcards.service.StudySessionService;
 import com.aram.flashcards.service.dto.StudySessionRequest;
-import com.aram.flashcards.service.exception.ConflictException;
 import com.aram.flashcards.service.exception.NotFoundException;
 import com.aram.flashcards.service.mapper.StudySessionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,6 @@ class StudySessionServiceImpl extends ValidatingService implements StudySessionS
 
     @Override
     public StudySession findById(String id) {
-        validateId(id);
         return studySessionRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(format("Cannot find study session with id = %s", id)));
     }
@@ -58,7 +56,6 @@ class StudySessionServiceImpl extends ValidatingService implements StudySessionS
 
     @Override
     public boolean existsById(String id) {
-        validateId(id);
         return studySessionRepository.existsById(id);
     }
 
@@ -76,12 +73,11 @@ class StudySessionServiceImpl extends ValidatingService implements StudySessionS
     }
 
     private void validate(StudySession studySession) {
-        assertNonNull(studySession);
+        assertNotNull(studySession);
         categoryService.assertExistsById(studySession.getCategoryId());
     }
 
     private void validate(StudySessionRequest request) {
-        assertNonNull(request);
         categoryService.assertExistsById(request.getCategoryId());
     }
 

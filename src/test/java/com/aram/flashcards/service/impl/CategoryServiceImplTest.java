@@ -45,10 +45,10 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    void findsAll() {
-        when(categoryRepository.findAll()).thenReturn(categories);
+    void findsAllOrderedByName() {
+        when(categoryRepository.findAllByOrderByNameAsc()).thenReturn(categories);
         assertEquals(categories, categoryService.findAll());
-        verify(categoryRepository, times(1)).findAll();
+        verify(categoryRepository, times(1)).findAllByOrderByNameAsc();
     }
 
     @Test
@@ -106,6 +106,8 @@ public class CategoryServiceImplTest {
 
     @Test
     void deletesExistentCategoryById() {
+        when(categoryRepository.existsById("1")).thenReturn(true);
+
         categoryService.deleteById("1");
         verify(categoryRepository, times(1)).deleteById("1");
     }

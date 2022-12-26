@@ -23,16 +23,16 @@ public class CategoryIntegrationTest {
     private WebTestClient client;
 
     @Test
-    void findsAllCategories() {
+    void findsAllCategoriesInAlphabeticalOrder() {
         String expectedResponseBody = """
                 [
                     {
-                        "id":"1",
-                        "name":"Music"
-                    },
-                    {
                         "id":"2",
                         "name":"Finance"
+                    },
+                    {
+                        "id":"1",
+                        "name":"Music"
                     }
                 ]
                 """;
@@ -64,12 +64,6 @@ public class CategoryIntegrationTest {
 
     @Test
     void createsCategory() {
-        client.get().uri(path + "/details?name=Sports")
-                        .accept(APPLICATION_JSON)
-                        .exchange()
-                        .expectStatus().isNotFound()
-                        .expectBody().json("{\"message\":\"Cannot find category with name = Sports\"}");
-
         client.post().uri(path)
                 .contentType(APPLICATION_JSON)
                 .bodyValue("{\"name\":\"Sports\"}")
@@ -78,24 +72,10 @@ public class CategoryIntegrationTest {
                 .expectBody()
                     .jsonPath("$.id").exists()
                     .jsonPath("$.name").isEqualTo("Sports");
-
-        client.get().uri(path + "/details?name=Sports")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                    .jsonPath("$.id").exists()
-                    .jsonPath("$.name").isEqualTo("Sports");
     }
 
     @Test
     void returnsConflictWhenCreatingCategoryWithDuplicateName() {
-        client.get().uri(path + "/details?name=Music")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().json("{\"id\":\"1\", \"name\":\"Music\"}");
-
         client.post().uri(path)
                 .contentType(APPLICATION_JSON)
                 .bodyValue("{\"name\":\"Music\"}")
@@ -114,13 +94,17 @@ public class CategoryIntegrationTest {
     }
 
     @Test
-    void updatesExistentCategory() {
-        client.get().uri(path + "/1")
-                .accept(APPLICATION_JSON)
+    void returnsBadRequestWithErrorMessageWhenCreatingCategoryWithEmptyName() {
+        client.post().uri(path)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("{\"name\":\"\"}")
                 .exchange()
-                .expectStatus().isOk()
-                .expectBody().json("{\"id\":\"1\", \"name\":\"Music\"}");
+                .expectStatus().isBadRequest()
+                .expectBody().json("{\"errors\":[\"name is required\"]}");
+    }
 
+    @Test
+    void updatesExistentCategory() {
         client.put().uri(path)
                 .contentType(APPLICATION_JSON)
                 .bodyValue("{\"id\":\"1\", \"name\":\"Jazz Music\"}")
@@ -131,12 +115,6 @@ public class CategoryIntegrationTest {
 
     @Test
     void updatesNonExistentCategory() {
-        client.get().uri(path + "/3")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find category with id = 3\"}");
-
         client.put().uri(path)
                 .contentType(APPLICATION_JSON)
                 .bodyValue("{\"id\":\"3\", \"name\":\"Sports\"}")
@@ -146,13 +124,27 @@ public class CategoryIntegrationTest {
     }
 
     @Test
-    void returnsConflictWhenUpdatingCategoryWithDuplicateName() {
-        client.get().uri(path + "/details?name=Finance")
-                .accept(APPLICATION_JSON)
+    void returnsBadRequestWithErrorMessageWhenUpdatingCategoryWithEmptyId() {
+        client.put().uri(path)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("{\"id\":\"\", \"name\":\"Sports\"}")
                 .exchange()
-                .expectStatus().isOk()
-                .expectBody().json("{\"id\":\"2\", \"name\":\"Finance\"}");
+                .expectStatus().isBadRequest()
+                .expectBody().json("{\"errors\":[\"id is required\"]}");
+    }
 
+    @Test
+    void returnsBadRequestWithErrorMessageWhenUpdatingCategoryWithEmptyName() {
+        client.put().uri(path)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("{\"id\":\"1\", \"name\":\"\"}")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody().json("{\"errors\":[\"name is required\"]}");
+    }
+
+    @Test
+    void returnsConflictWhenUpdatingCategoryWithDuplicateName() {
         client.put().uri(path)
                 .contentType(APPLICATION_JSON)
                 .bodyValue("{\"id\":\"3\", \"name\":\"Finance\"}")
@@ -172,29 +164,13 @@ public class CategoryIntegrationTest {
 
     @Test
     void deletesExistentCategoryById() {
-        client.get().uri(path + "/1")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().json("{\"id\":\"1\", \"name\":\"Music\"}");
-
         client.delete().uri(path + "/1")
                 .exchange()
                 .expectStatus().isNoContent();
-
-        client.get().uri(path + "/1")
-                .exchange()
-                .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find category with id = 1\"}");
     }
 
     @Test
     void returnsNotFoundWhenDeletingNonExistentCategory() {
-        client.get().uri(path + "/3")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isNotFound();
-
         client.delete().uri(path + "/3")
                 .accept(APPLICATION_JSON)
                 .exchange()

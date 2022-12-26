@@ -3,6 +3,7 @@ package com.aram.flashcards.controller;
 import com.aram.flashcards.model.Flashcard;
 import com.aram.flashcards.service.dto.FlashcardRequest;
 import com.aram.flashcards.service.FlashcardService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +32,12 @@ public class FlashcardController implements ResponseHandler {
     }
 
     @PostMapping
-    public ResponseEntity<Flashcard> createFlashcard(@RequestBody FlashcardRequest request) {
+    public ResponseEntity<Flashcard> createFlashcard(@Valid @RequestBody FlashcardRequest request) {
         return created(flashcardService.createFlashcard(request));
     }
 
     @PutMapping
-    public ResponseEntity<Flashcard> update(@RequestBody Flashcard flashcard) {
+    public ResponseEntity<Flashcard> update(@Valid @RequestBody Flashcard flashcard) {
         return existsById(flashcard.getId()) ? ok(save(flashcard)) : created(save(flashcard));
     }
 

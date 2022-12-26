@@ -3,6 +3,7 @@ package com.aram.flashcards.controller;
 import com.aram.flashcards.model.StudySession;
 import com.aram.flashcards.service.StudySessionService;
 import com.aram.flashcards.service.dto.StudySessionRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +32,12 @@ public class StudySessionController implements ResponseHandler {
     }
 
     @PostMapping
-    public ResponseEntity<StudySession> createStudySession(@RequestBody StudySessionRequest request) {
+    public ResponseEntity<StudySession> createStudySession(@Valid @RequestBody StudySessionRequest request) {
         return created(studySessionService.createStudySession(request));
     }
 
     @PutMapping
-    public ResponseEntity<StudySession> update(@RequestBody StudySession studySession) {
+    public ResponseEntity<StudySession> update(@Valid @RequestBody StudySession studySession) {
         return existsById(studySession.getId()) ? ok(save(studySession)) : created(save(studySession));
     }
 

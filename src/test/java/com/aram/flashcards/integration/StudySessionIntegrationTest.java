@@ -28,7 +28,7 @@ public class StudySessionIntegrationTest {
                     {
                         "id":"1",
                         "categoryId":"1",
-                        "name":"Guitar chords"
+                        "name":"Guitar"
                     },
                     {
                         "id":"2",
@@ -51,7 +51,7 @@ public class StudySessionIntegrationTest {
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().json("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"Guitar chords\"}");
+                .expectBody().json("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"Guitar\"}");
     }
 
     @Test
@@ -96,13 +96,27 @@ public class StudySessionIntegrationTest {
     }
 
     @Test
-    void updatesExistentStudySession() {
-        client.get().uri(path + "/1")
-                .accept(APPLICATION_JSON)
+    void returnsBadRequestWithErrorMessageWhenCreatingStudySessionWithEmptyCategoryId() {
+        client.post().uri(path)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("{\"categoryId\":\"\", \"name\":\"Water sports\"}")
                 .exchange()
-                .expectStatus().isOk()
-                .expectBody().json("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"Guitar chords\"}");
+                .expectStatus().isBadRequest()
+                .expectBody().json("{\"errors\":[\"category id is required\"]}");
+    }
 
+    @Test
+    void returnsBadRequestWithErrorMessageWhenCreatingStudySessionWithEmptyName() {
+        client.post().uri(path)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("{\"categoryId\":\"3\", \"name\":\"\"}")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody().json("{\"errors\":[\"name is required\"]}");
+    }
+
+    @Test
+    void updatesExistentStudySession() {
         client.put().uri(path)
                 .contentType(APPLICATION_JSON)
                 .bodyValue("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"Classic music\"}")
@@ -113,22 +127,11 @@ public class StudySessionIntegrationTest {
 
     @Test
     void updatesNonExistentStudySession() {
-        client.get().uri(path + "/3")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isNotFound();
-
         client.put().uri(path)
                 .contentType(APPLICATION_JSON)
                 .bodyValue("{\"id\":\"3\", \"categoryId\":\"1\", \"name\":\"Classic music\"}")
                 .exchange()
                 .expectStatus().isCreated()
-                .expectBody().json("{\"id\":\"3\", \"categoryId\":\"1\", \"name\":\"Classic music\"}");
-
-        client.get().uri(path + "/3")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
                 .expectBody().json("{\"id\":\"3\", \"categoryId\":\"1\", \"name\":\"Classic music\"}");
     }
 
@@ -152,32 +155,45 @@ public class StudySessionIntegrationTest {
     }
 
     @Test
-    void deletesExistentStudySessionById() {
-        client.get().uri(path + "/1")
-              .accept(APPLICATION_JSON)
-              .exchange()
-              .expectStatus().isOk()
-              .expectBody().json("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"Guitar chords\"}");
+    void returnsBadRequestWithErrorMessageWhenUpdatingStudySessionWithEmptyId() {
+        client.put().uri(path)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("{\"id\":\"\", \"categoryId\":\"1\", \"name\":\"Modern music\"}")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody().json("{\"errors\":[\"id is required\"]}");
+    }
 
+    @Test
+    void returnsBadRequestWithErrorMessageWhenUpdatingStudySessionWithEmptyName() {
+        client.put().uri(path)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("{\"id\":\"1\", \"categoryId\":\"1\", \"name\":\"\"}")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody().json("{\"errors\":[\"name is required\"]}");
+    }
+
+    @Test
+    void returnsBadRequestWithErrorMessageWhenUpdatingStudySessionWithEmptyCategoryId() {
+        client.put().uri(path)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("{\"id\":\"1\", \"categoryId\":\"\", \"name\":\"Modern music\"}")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody().json("{\"errors\":[\"category id is required\"]}");
+    }
+
+    @Test
+    void deletesExistentStudySessionById() {
         client.delete().uri(path + "/1")
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNoContent();
-
-        client.get().uri(path + "/1")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find study session with id = 1\"}");
     }
 
     @Test
     void returnsNotFoundWhenDeletingNonExistentStudySession() {
-        client.get().uri(path + "/3")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isNotFound();
-
         client.delete().uri(path + "/3")
                 .accept(APPLICATION_JSON)
                 .exchange()
