@@ -138,4 +138,22 @@ public class StudySessionServiceImplTest {
         assertDoesNotThrow(() -> studySessionService.assertExistsById("1"));
     }
 
+    @Test
+    void returnsIdFromStudySessionWithGivenNameWhenStudySessionExistsByName() {
+        when(studySessionRepository.findByName("Drawing techniques"))
+                .thenReturn(Optional.of(new StudySession("10", "2", "Drawing techniques")));
+
+        String id = studySessionService.idFromStudySessionWithName("Drawing techniques");
+        assertEquals(id, "10");
+        verify(studySessionRepository, times(1)).findByName("Drawing techniques");
+    }
+
+    @Test
+    void throwsExceptionWhenGettingIdFromNonExistentStudySession() {
+        when(studySessionRepository.findByName("Drawing techniques")).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> studySessionService.idFromStudySessionWithName("Drawing techniques"));
+    }
+
 }

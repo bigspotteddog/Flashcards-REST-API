@@ -21,4 +21,6 @@ public interface CategoryService {
 
     Category findByName(String name);
 
+    String idFromCategoryWithName(String categoryName);
+
 }

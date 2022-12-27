@@ -9,9 +9,6 @@ spring:
     init:
       mode: always
 
-  jpa:
-    show-sql: true
-
   servlet:
     path:
       base: /api/v1

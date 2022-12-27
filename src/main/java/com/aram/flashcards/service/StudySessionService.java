@@ -19,4 +19,6 @@ public interface StudySessionService {
 
     void assertExistsById(String id);
 
+    String idFromStudySessionWithName(String name);
+
 }

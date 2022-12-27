@@ -147,4 +147,23 @@ public class CategoryServiceImplTest {
         assertDoesNotThrow(() -> categoryService.assertExistsById("1"));
     }
 
+    @Test
+    void returnsIdFromExistentCategoryWhenCategoryExistsByName() {
+        when(categoryRepository.findByName("Music"))
+                .thenReturn(Optional.of(new Category("10", "Music")));
+
+        String id = categoryService.idFromCategoryWithName("Music");
+        assertEquals("10", id);
+        verify(categoryRepository, times(1)).findByName("Music");
+    }
+
+    @Test
+    void throwsExceptionWhenGettingIdFromNonExistentCategory() {
+        when(categoryRepository.findByName("Music")).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> categoryService.idFromCategoryWithName("Music"));
+        verify(categoryRepository, times(1)).findByName("Music");
+    }
+
 }

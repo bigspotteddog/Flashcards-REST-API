@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Data
-@NoArgsConstructor(force = true)
+@NoArgsConstructor(force = true, access = PRIVATE)
 @AllArgsConstructor
 public class CategoryRequest {
 

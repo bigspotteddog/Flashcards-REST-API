@@ -19,6 +19,6 @@ CREATE TABLE flashcard(
     id VARCHAR(40) NOT NULL PRIMARY KEY,
     study_session_id VARCHAR(40) NOT NULL,
     question VARCHAR(200) NOT NULL,
-    answer VARCHAR(50) NOT NULL,
+    answer VARCHAR(300) NOT NULL,
     FOREIGN KEY (study_session_id) REFERENCES study_session(id) ON DELETE CASCADE
 );

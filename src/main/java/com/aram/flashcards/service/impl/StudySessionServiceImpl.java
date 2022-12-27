@@ -7,6 +7,7 @@ import com.aram.flashcards.service.StudySessionService;
 import com.aram.flashcards.service.dto.StudySessionRequest;
 import com.aram.flashcards.service.exception.NotFoundException;
 import com.aram.flashcards.service.mapper.StudySessionMapper;
+import com.fasterxml.jackson.annotation.JacksonInject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,6 +71,16 @@ class StudySessionServiceImpl extends ValidatingService implements StudySessionS
         if (!existsById(id)) {
             throw new NotFoundException(format("Cannot find study session with id = %s", id));
         }
+    }
+
+    @Override
+    public String idFromStudySessionWithName(String name) {
+        return findByName(name).getId();
+    }
+
+    private StudySession findByName(String name) {
+        return studySessionRepository.findByName(name)
+                .orElseThrow(() -> new NotFoundException(format("Cannot find study session with name = %s", name)));
     }
 
     private void validate(StudySession studySession) {

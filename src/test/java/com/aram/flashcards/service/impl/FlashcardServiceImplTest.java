@@ -131,7 +131,7 @@ public class FlashcardServiceImplTest {
     }
 
     @Test
-    void testdeleteById() {
+    void testDeleteById() {
         flashcardService.deleteById("1");
 
         verify(flashcardRepository, times(1)).deleteById("1");

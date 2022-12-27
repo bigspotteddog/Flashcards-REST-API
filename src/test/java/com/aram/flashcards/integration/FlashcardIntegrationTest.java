@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
+@Sql({"/test-data.sql"})
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -22,29 +24,44 @@ public class FlashcardIntegrationTest {
     WebTestClient client;
 
     @Test
-    void findsAll() {
-        String expectedResponseBody = """
-                [
-                    {
-                        "id":"1",
-                        "studySessionId":"1",
-                        "question":"What is the first tone of the scale?",
-                        "answer":"The first tone is called C"
-                    },
-                    {
-                        "id":"2",
-                        "studySessionId":"2",
-                        "question":"What is a broker?",
-                        "answer":"A person that facilitates transactions"
-                    }
-                ]
-                """;
-
+    void loadsTestData() {
         client.get().uri(path)
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().json(expectedResponseBody);
+                .expectBody()
+                    .jsonPath("$").isArray()
+                    .jsonPath("$[?(@.question == 'What kind of star is the sun?')]").exists();
+    }
+
+    @Test
+    void loadsInitialFlashcards() {
+        client.get().uri(path)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                    .jsonPath("$").isArray()
+                    .jsonPath("$[?(@.question == 'What is the grid technique?')]").exists()
+                    .jsonPath("$[?(@.question == 'What is scribbling?')]").exists()
+                    .jsonPath("$[?(@.question == 'What is stop motion animation?')]").exists()
+                    .jsonPath("$[?(@.question == 'What is rotoscope animation?')]").exists()
+                    .jsonPath("$[?(@.question == 'What are the types of chemical reactions?')]").exists()
+                    .jsonPath("$[?(@.question == 'What is a covalent bond?')]").exists()
+                    .jsonPath("$[?(@.question == 'What are the four types of nuclear reactions?')]").exists()
+                    .jsonPath("$[?(@.question == 'What is nuclear fusion?')]").exists()
+                    .jsonPath("$[?(@.question == 'What are thriller movies?')]").exists()
+                    .jsonPath("$[?(@.question == 'What are comedy movies?')]").exists()
+                    .jsonPath("$[?(@.question == 'Who directed Inception?')]").exists()
+                    .jsonPath("$[?(@.question == 'Who directed The Shining?')]").exists()
+                    .jsonPath("$[?(@.question == 'Who composed the ninth symphony?')]").exists()
+                    .jsonPath("$[?(@.question == 'Who composed the Jupiter symphony?')]").exists()
+                    .jsonPath("$[?(@.question == 'What is the tonic?')]").exists()
+                    .jsonPath("$[?(@.question == 'What is a chord progression?')]").exists()
+                    .jsonPath("$[?(@.question == 'What is the S of the SOLID principles?')]").exists()
+                    .jsonPath("$[?(@.question == 'What are the four pillars of OOP?')]").exists()
+                    .jsonPath("$[?(@.question == 'What is a higher order function?')]").exists()
+                    .jsonPath("$[?(@.question == 'What is function composition?')]").exists();
     }
 
     @Test
@@ -53,8 +70,8 @@ public class FlashcardIntegrationTest {
                 {
                     "id":"1",
                     "studySessionId":"1",
-                    "question":"What is the first tone of the scale?",
-                    "answer":"The first tone is called C"
+                    "question":"What kind of star is the sun?",
+                    "answer":"Yellow dwarf"
                 }
                 """;
 
