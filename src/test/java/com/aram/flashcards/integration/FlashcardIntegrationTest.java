@@ -92,12 +92,41 @@ public class FlashcardIntegrationTest {
     }
 
     @Test
+    void findsAllByStudySessionId() {
+        client.get().uri(path + "/details?studySessionId=1")
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                    .jsonPath("$").isArray()
+                    .json("""
+                            [
+                                {
+                                    'id':'1',
+                                    'studySessionId':'1',
+                                    'question':'What kind of star is the sun?',
+                                    'answer':'Yellow dwarf'
+                                }
+                            ]
+                            """);
+    }
+
+    @Test
+    void returnsNotFoundWithErrorMessageWhenFindingAllFlashcardsFromNonExistentStudySession() {
+        client.get().uri(path + "/details?studySessionId=3")
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody().json("{'message':'Cannot find study session with id = 3'}");
+    }
+
+    @Test
     void createsFlashcard() {
         String requestBody = """
                 {
                     "studySessionId":"1",
-                    "question":"What types of guitars do exist?",
-                    "answer":"Acoustic and electric"
+                    "question":"Which is the largest planet of the solar system?",
+                    "answer":"Jupiter"
                 }
                 """;
 
@@ -109,8 +138,8 @@ public class FlashcardIntegrationTest {
                 .expectBody()
                     .jsonPath("$.id").exists()
                     .jsonPath("$.studySessionId").isEqualTo("1")
-                    .jsonPath("$.question").isEqualTo("What types of guitars do exist?")
-                    .jsonPath("$.answer").isEqualTo("Acoustic and electric");
+                    .jsonPath("$.question").isEqualTo("Which is the largest planet of the solar system?")
+                    .jsonPath("$.answer").isEqualTo("Jupiter");
     }
 
     @Test
@@ -172,8 +201,8 @@ public class FlashcardIntegrationTest {
                 {
                     "id":"1",
                     "studySessionId":"1",
-                    "question":"What is an electric guitar?",
-                    "answer":"A guitar that can be plugged to an amplifier"
+                    "question":"Which is the closest planet to the Sun?",
+                    "answer":"Mercury"
                 }
                 """;
 
@@ -191,8 +220,8 @@ public class FlashcardIntegrationTest {
                 {
                     "id":"3",
                     "studySessionId":"1",
-                    "question":"What is an electric guitar?",
-                    "answer":"A guitar that can be plugged to an amplifier"
+                    "question":"Which is the closest planet to the Sun?",
+                    "answer":"Mercury"
                 }
                 """;
 

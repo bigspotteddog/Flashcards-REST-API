@@ -64,6 +64,12 @@ class FlashcardServiceImpl extends ValidatingService implements FlashcardService
         flashcardRepository.deleteById(id);
     }
 
+    @Override
+    public Iterable<Flashcard> findAllByStudySessionId(String studySessionId) {
+        studySessionService.assertExistsById(studySessionId);
+        return flashcardRepository.findAllByStudySessionId(studySessionId);
+    }
+
     private void validate(FlashcardRequest request) {
         assertNotNull(request);
         studySessionService.assertExistsById(request.getStudySessionId());

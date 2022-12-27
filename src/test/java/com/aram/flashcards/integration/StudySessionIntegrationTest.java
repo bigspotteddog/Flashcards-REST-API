@@ -73,6 +73,26 @@ public class StudySessionIntegrationTest {
     }
 
     @Test
+    void findsAllByCategoryId() {
+        client.get().uri(path + "/details?categoryId=1")
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                    .jsonPath("$").isArray()
+                    .json("[{'id':'1', 'categoryId':'1', 'name':'Solar system'}]");
+    }
+
+    @Test
+    void returnsNotFoundWhenFindingAllStudySessionsFromNonExistentCategory() {
+        client.get().uri(path + "/details?categoryId=3")
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody().json("{'message':'Cannot find category with id = 3'}");
+    }
+
+    @Test
     void createsStudySession() {
         client.post().uri(path)
                 .contentType(APPLICATION_JSON)
@@ -167,7 +187,7 @@ public class StudySessionIntegrationTest {
     void returnsBadRequestWithErrorMessageWhenUpdatingStudySessionWithEmptyId() {
         client.put().uri(path)
                 .contentType(APPLICATION_JSON)
-                .bodyValue("{\"id\":\"\", \"categoryId\":\"1\", \"name\":\"Modern music\"}")
+                .bodyValue("{\"id\":\"\", \"categoryId\":\"1\", \"name\":\"Types of planets\"}")
                 .exchange()
                 .expectStatus().isBadRequest()
                 .expectBody().json("{\"errors\":[\"id is required\"]}");
@@ -187,7 +207,7 @@ public class StudySessionIntegrationTest {
     void returnsBadRequestWithErrorMessageWhenUpdatingStudySessionWithEmptyCategoryId() {
         client.put().uri(path)
                 .contentType(APPLICATION_JSON)
-                .bodyValue("{\"id\":\"1\", \"categoryId\":\"\", \"name\":\"Modern music\"}")
+                .bodyValue("{\"id\":\"1\", \"categoryId\":\"\", \"name\":\"Types of planets\"}")
                 .exchange()
                 .expectStatus().isBadRequest()
                 .expectBody().json("{\"errors\":[\"category id is required\"]}");

@@ -89,6 +89,24 @@ public class CategoryIntegrationTest {
     }
 
     @Test
+    void findsExistentCategoryByName() {
+        client.get().uri(path + "/details?name=Astronomy")
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().json("{'id':'1', 'name':'Astronomy'}");
+    }
+
+    @Test
+    void returnsNotFoundWhenFindingNonExistentCategoryByName() {
+        client.get().uri(path + "/details?name=Economics")
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody().json("{'message':'Cannot find category with name = Economics'}");
+    }
+
+    @Test
     void createsCategoryWhenCategoryDoesNotExistByName() {
         client.post().uri(path)
                 .contentType(APPLICATION_JSON)

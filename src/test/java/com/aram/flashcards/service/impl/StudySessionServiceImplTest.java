@@ -4,7 +4,6 @@ import com.aram.flashcards.model.StudySession;
 import com.aram.flashcards.repository.StudySessionRepository;
 import com.aram.flashcards.service.CategoryService;
 import com.aram.flashcards.service.dto.StudySessionRequest;
-import com.aram.flashcards.service.exception.ConflictException;
 import com.aram.flashcards.service.exception.NotFoundException;
 import com.aram.flashcards.service.mapper.StudySessionMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -67,6 +67,15 @@ public class StudySessionServiceImplTest {
         when(studySessionRepository.findById("1")).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> studySessionService.findById("1"));
         verify(studySessionRepository, times(1)).findById("1");
+    }
+
+    @Test
+    void findsAllByCategoryId() {
+        when(studySessionRepository.findAllByCategoryId("1"))
+                .thenReturn(Set.of(studySession));
+
+        assertEquals(Set.of(studySession), studySessionService.findAllByCategoryId("1"));
+        verify(studySessionRepository, times(1)).findAllByCategoryId("1");
     }
 
     @Test

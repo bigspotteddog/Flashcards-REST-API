@@ -78,6 +78,12 @@ class StudySessionServiceImpl extends ValidatingService implements StudySessionS
         return findByName(name).getId();
     }
 
+    @Override
+    public Iterable<StudySession> findAllByCategoryId(String categoryId) {
+        categoryService.assertExistsById(categoryId);
+        return studySessionRepository.findAllByCategoryId(categoryId);
+    }
+
     private StudySession findByName(String name) {
         return studySessionRepository.findByName(name)
                 .orElseThrow(() -> new NotFoundException(format("Cannot find study session with name = %s", name)));

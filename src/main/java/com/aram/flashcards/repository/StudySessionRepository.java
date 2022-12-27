@@ -9,4 +9,6 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Stri
 
     Optional<StudySession> findByName(String name);
 
+    Iterable<StudySession> findAllByCategoryId(String id);
+
 }

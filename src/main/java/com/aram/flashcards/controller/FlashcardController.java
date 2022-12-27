@@ -31,6 +31,11 @@ public class FlashcardController implements ResponseHandler {
         return ok(flashcardService.findById(id));
     }
 
+    @GetMapping("/details")
+    public ResponseEntity<Iterable<Flashcard>> findAllByStudySessionId(@RequestParam String studySessionId) {
+        return ok(flashcardService.findAllByStudySessionId(studySessionId));
+    }
+
     @PostMapping
     public ResponseEntity<Flashcard> createFlashcard(@Valid @RequestBody FlashcardRequest request) {
         return created(flashcardService.createFlashcard(request));

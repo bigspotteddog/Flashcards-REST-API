@@ -16,4 +16,6 @@ public interface FlashcardService {
 
     void deleteById(String id);
 
+    Iterable<Flashcard> findAllByStudySessionId(String studySessionId);
+
 }

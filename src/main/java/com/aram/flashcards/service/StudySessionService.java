@@ -21,4 +21,5 @@ public interface StudySessionService {
 
     String idFromStudySessionWithName(String name);
 
+    Iterable<StudySession> findAllByCategoryId(String categoryId);
 }

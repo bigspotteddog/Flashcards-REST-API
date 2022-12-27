@@ -75,6 +75,16 @@ public class FlashcardControllerTest extends WebLayerTest {
     }
 
     @Test
+    void findsAllByStudySessionIdWhenStudySessionExists() throws Exception {
+        when(flashcardService.findAllByStudySessionId("1"))
+                .thenReturn(Set.of(flashcard));
+
+        mockMvc.perform(get(flashcardsPath + "/details?studySessionId=1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(serialize(Set.of(flashcard))));
+    }
+
+    @Test
     void createsFlashcard() throws Exception {
         FlashcardRequest request = new FlashcardRequest(
                 "1",

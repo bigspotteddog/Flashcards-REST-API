@@ -74,6 +74,15 @@ public class StudySessionControllerTest extends WebLayerTest {
     }
 
     @Test
+    void findsAllByCategoryId() throws Exception {
+        when(studySessionService.findAllByCategoryId("1")).thenReturn(Set.of(studySession));
+
+        mockMvc.perform(get(studySessionsPath + "/details?categoryId=1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(serialize(Set.of(studySession))));
+    }
+
+    @Test
     void createsStudySessionWhenStudySessionDoesNotExist() throws Exception {
         StudySessionRequest request = new StudySessionRequest("2", "Solar System");
         when(studySessionService.createStudySession(request)).thenReturn(studySession);

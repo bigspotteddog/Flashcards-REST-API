@@ -31,6 +31,11 @@ public class StudySessionController implements ResponseHandler {
         return ok(studySessionService.findById(id));
     }
 
+    @GetMapping("/details")
+    public ResponseEntity<Iterable<StudySession>> findAllByCategoryId(@RequestParam String categoryId) {
+        return ok(studySessionService.findAllByCategoryId(categoryId));
+    }
+
     @PostMapping
     public ResponseEntity<StudySession> createStudySession(@Valid @RequestBody StudySessionRequest request) {
         return created(studySessionService.createStudySession(request));

@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,6 +56,7 @@ public class FlashcardServiceImplTest {
     @Test
     void testFindAll() {
         when(flashcardRepository.findAll()).thenReturn(flashcards);
+
         assertEquals(flashcards, flashcardService.findAll());
         verify(flashcardRepository, times(1)).findAll();
     }
@@ -62,6 +64,7 @@ public class FlashcardServiceImplTest {
     @Test
     void testFindById() {
         when(flashcardRepository.findById("1")).thenReturn(Optional.of(flashcard));
+
         assertEquals(flashcard, flashcardService.findById("1"));
         verify(flashcardRepository, times(1)).findById("1");
     }
@@ -69,8 +72,18 @@ public class FlashcardServiceImplTest {
     @Test
     void throwsExceptionWhenFlashcardDoesNotExistById() {
         when(flashcardRepository.findById("1")).thenReturn(Optional.empty());
+
         assertThrows(NotFoundException.class, () -> flashcardService.findById("1"));
         verify(flashcardRepository, times(1)).findById("1");
+    }
+
+    @Test
+    void findsAllByStudySessionId() {
+        when(flashcardRepository.findAllByStudySessionId("1"))
+                .thenReturn(Set.of(flashcard));
+
+        assertEquals(Set.of(flashcard), flashcardService.findAllByStudySessionId("1"));
+        verify(flashcardRepository, times(1)).findAllByStudySessionId("1");
     }
 
     @Test
