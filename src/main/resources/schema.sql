@@ -12,7 +12,8 @@ CREATE TABLE study_session(
     id VARCHAR(40) NOT NULL PRIMARY KEY,
     category_id VARCHAR(40) NOT NULL,
     name VARCHAR(30) NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE
+    FOREIGN KEY (category_id) REFERENCES category(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE flashcard(
@@ -20,5 +21,6 @@ CREATE TABLE flashcard(
     study_session_id VARCHAR(40) NOT NULL,
     question VARCHAR(200) NOT NULL,
     answer VARCHAR(300) NOT NULL,
-    FOREIGN KEY (study_session_id) REFERENCES study_session(id) ON DELETE CASCADE
+    FOREIGN KEY (study_session_id) REFERENCES study_session(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );

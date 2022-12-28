@@ -70,7 +70,7 @@ public class StudySessionControllerTest extends WebLayerTest {
 
         mockMvc.perform(get(studySessionsPath + "/1"))
                 .andExpect(status().isNotFound())
-                .andExpect(content().json("{\"message\":\"Cannot find study session with id = 1\"}"));
+                .andExpect(content().json("{\"error\":\"Cannot find study session with id = 1\"}"));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class StudySessionControllerTest extends WebLayerTest {
                 .contentType(APPLICATION_JSON)
                 .content(serialize(request)))
                 .andExpect(status().isConflict())
-                .andExpect(content().json("{\"message\":\"Study session with name = Solar System already exists\"}"));
+                .andExpect(content().json("{\"error\":\"Study session with name = Solar System already exists\"}"));
     }
     @Test
     void returnsBadRequestWhenRequestBodyToCreateStudySessionIsEmpty() throws Exception {
@@ -124,7 +124,7 @@ public class StudySessionControllerTest extends WebLayerTest {
                         .contentType(APPLICATION_JSON)
                         .content(serialize(request)))
                 .andExpect(status().isNotFound())
-                .andExpect(content().json("{\"message\":\"Category with id = 2 does not exist\"}"));
+                .andExpect(content().json("{\"error\":\"Category with id = 2 does not exist\"}"));
     }
 
     @Test
@@ -172,7 +172,7 @@ public class StudySessionControllerTest extends WebLayerTest {
                         .contentType(APPLICATION_JSON)
                         .content(serialize(studySession)))
                 .andExpect(status().isConflict())
-                .andExpect(content().json("{\"message\":\"Study session with name = Solar System already exists\"}"));
+                .andExpect(content().json("{\"error\":\"Study session with name = Solar System already exists\"}"));
     }
 
     @Test
@@ -186,7 +186,7 @@ public class StudySessionControllerTest extends WebLayerTest {
                         .contentType(APPLICATION_JSON)
                         .content(serialize(studySession)))
                 .andExpect(status().isNotFound())
-                .andExpect(content().json("{\"message\":\"Category with id = 2 does not exist\"}"));
+                .andExpect(content().json("{\"error\":\"Category with id = 2 does not exist\"}"));
     }
 
     @Test

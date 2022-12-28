@@ -88,7 +88,7 @@ public class FlashcardIntegrationTest {
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find flashcard with id = 3\"}");
+                .expectBody().json("{\"error\":\"Cannot find flashcard with id = 3\"}");
     }
 
     @Test
@@ -117,7 +117,7 @@ public class FlashcardIntegrationTest {
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{'message':'Cannot find study session with id = 3'}");
+                .expectBody().json("{'error':'Cannot find study session with id = 3'}");
     }
 
     @Test
@@ -157,7 +157,7 @@ public class FlashcardIntegrationTest {
                 .bodyValue(requestBody)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find study session with id = 3\"}");
+                .expectBody().json("{\"error\":\"Cannot find study session with id = 3\"}");
     }
 
     @Test

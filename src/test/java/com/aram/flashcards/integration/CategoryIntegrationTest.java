@@ -85,7 +85,7 @@ public class CategoryIntegrationTest {
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{'message':'Cannot find category with id = 3'}");
+                .expectBody().json("{'error':'Cannot find category with id = 3'}");
     }
 
     @Test
@@ -103,7 +103,7 @@ public class CategoryIntegrationTest {
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{'message':'Cannot find category with name = Economics'}");
+                .expectBody().json("{'error':'Cannot find category with name = Economics'}");
     }
 
     @Test
@@ -125,7 +125,7 @@ public class CategoryIntegrationTest {
                 .bodyValue("{\"name\":\"Music\"}")
                 .exchange()
                 .expectStatus().isEqualTo(CONFLICT.value())
-                .expectBody().json("{\"message\":\"Category with name = Music already exists\"}");
+                .expectBody().json("{\"error\":\"Category with name = Music already exists\"}");
     }
 
     @Test
@@ -194,7 +194,7 @@ public class CategoryIntegrationTest {
                 .bodyValue("{\"id\":\"1\", \"name\":\"Music\"}")
                 .exchange()
                 .expectStatus().isEqualTo(CONFLICT.value())
-                .expectBody().json("{\"message\":\"Category with name = Music already exists\"}");
+                .expectBody().json("{\"error\":\"Category with name = Music already exists\"}");
     }
 
     @Test
@@ -219,7 +219,7 @@ public class CategoryIntegrationTest {
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find category with id = 3\"}");
+                .expectBody().json("{\"error\":\"Cannot find category with id = 3\"}");
     }
 
 }

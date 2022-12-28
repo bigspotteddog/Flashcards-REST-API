@@ -71,7 +71,7 @@ public class FlashcardControllerTest extends WebLayerTest {
         mockMvc.perform(get(flashcardsPath + "/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException))
-                .andExpect(content().json("{'message':'Flashcard with id = 1 does not exist'}"));
+                .andExpect(content().json("{'error':'Flashcard with id = 1 does not exist'}"));
     }
 
     @Test
@@ -122,7 +122,7 @@ public class FlashcardControllerTest extends WebLayerTest {
                 .contentType(APPLICATION_JSON)
                 .content(serialize(request)))
                 .andExpect(status().isNotFound())
-                .andExpect(content().json("{'message':'Study session with id = 1 does not exist'}"));
+                .andExpect(content().json("{'error':'Study session with id = 1 does not exist'}"));
     }
 
     @Test
@@ -173,7 +173,7 @@ public class FlashcardControllerTest extends WebLayerTest {
                         .contentType(APPLICATION_JSON)
                         .content(serialize(flashcard)))
                 .andExpect(status().isNotFound())
-                .andExpect(content().json("{'message':'Study session with id = 2 does not exist'}"));
+                .andExpect(content().json("{'error':'Study session with id = 2 does not exist'}"));
     }
 
     @Test

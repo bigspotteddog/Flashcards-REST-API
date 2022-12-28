@@ -69,7 +69,7 @@ public class StudySessionIntegrationTest {
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find study session with id = 3\"}");
+                .expectBody().json("{\"error\":\"Cannot find study session with id = 3\"}");
     }
 
     @Test
@@ -89,7 +89,7 @@ public class StudySessionIntegrationTest {
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{'message':'Cannot find category with id = 3'}");
+                .expectBody().json("{'error':'Cannot find category with id = 3'}");
     }
 
     @Test
@@ -112,7 +112,7 @@ public class StudySessionIntegrationTest {
                 .bodyValue("{\"categoryId\":\"3\", \"name\":\"Classic music authors\"}")
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find category with id = 3\"}");
+                .expectBody().json("{\"error\":\"Cannot find category with id = 3\"}");
     }
 
     @Test
@@ -171,7 +171,7 @@ public class StudySessionIntegrationTest {
                 .bodyValue("{\"id\":\"1\", \"categoryId\":\"3\", \"name\":\"Classic music\"}")
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find category with id = 3\"}");
+                .expectBody().json("{\"error\":\"Cannot find category with id = 3\"}");
     }
 
     @Test
@@ -227,7 +227,7 @@ public class StudySessionIntegrationTest {
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody().json("{\"message\":\"Cannot find study session with id = 3\"}");
+                .expectBody().json("{\"error\":\"Cannot find study session with id = 3\"}");
     }
 
 }
