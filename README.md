@@ -12,6 +12,9 @@ The app satisfies the following use cases:
 
 **User can perform CRUD operations on Flashcards**
 
+# Technologies:
+Java 17, Spring Boot, Spring MVC, Spring JPA
+
 # Prerequisites
 1) JDK / Java 17
 2) MySQL
@@ -21,10 +24,10 @@ The app satisfies the following use cases:
 2) Create a database scheme with name 'flashcards' 
 3) Change the following properties in the 'application.yml' file to match your local MySQL credentials: 
 'spring.datasource.username' and 'spring.datasource.password' 
-5) Run the app
+4) Run the app
 
 # Testing
-The app has a solid suite of unit tests and integration tests with almost 100% line coverage
+The app has a solid suite of unit tests and integration tests with (almost) 100% line coverage
 
 # Swagger UI
 The app includes Swagger UI documentation. 
