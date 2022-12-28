@@ -2,8 +2,8 @@ spring:
 
   datasource:
     url: jdbc:mysql://localhost:3306/flashcards
-    username:
-    password:
+    username: root
+    password: 27111995
 
   sql:
     init:
